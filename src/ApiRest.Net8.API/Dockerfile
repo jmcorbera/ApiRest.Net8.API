@@ -13,7 +13,7 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 # Escuchar en todas las interfaces
-ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_URLS=http://+:8080
 ENV DOTNET_ENVIRONMENT=Development
 
 EXPOSE 80
