@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - development
+      
+env:
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/ApiRest.Net8.API
 
 jobs:
   build-and-push:
@@ -26,15 +29,22 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/ApiRest.Net8.API:development
+          tags: ${{ env.IMAGE_NAME }}:development
 
       - name: Update GitOps repo (dev)
         run: |
-          git clone https://github.com/jmcorbera/mi-api-gitops.git gitops
-          cd gitops/dev
-          sed -i "s|image:.*|image: ${{ secrets.DOCKER_USERNAME }}/mi-api:latest|" mi-api-deployment.yaml
+          git clone https://x-access-token:${{ secrets.GITOPS_TOKEN }}@github.com/jmcorbera/GitOps.git
+
+      - name: Update deployment image 
+        run: |
+          cd GitOps/dev
+          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}:development |" ApiRest.Net8.API-deployment.yaml
+
+      - name: Commit and push changes 
+        run: |
+          cd GitOps/dev
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-          git add mi-api-deployment.yaml
-          git commit -m "Update image for dev"
+          git add .
+          git commit -m "Update dev image to development"
           git push
