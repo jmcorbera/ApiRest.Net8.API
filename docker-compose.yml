@@ -3,8 +3,8 @@ version: '3.8'
 services:
   web:  
     build:
-      context: ./src/ApiRest.Net8.API
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: src/ApiRest.Net8.API/Dockerfile
     ports:
       - "8080:80"
     environment:

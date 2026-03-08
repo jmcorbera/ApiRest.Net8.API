@@ -2,13 +2,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Copiamos el csproj y restauramos dependencias
-COPY ApiRest.Net8.API.csproj ./
-RUN dotnet restore ./ApiRest.Net8.API.csproj 
-
-# Copiamos todo el código
-COPY . .
-RUN dotnet publish ./ApiRest.Net8.API.csproj -c Release -o /app/publish
+# Copiamos todo el proyecto
+COPY src/ApiRest.Net8.API/ ./
+RUN dotnet restore 
+RUN dotnet publish -c Release -o /app/publish
 
 # Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
