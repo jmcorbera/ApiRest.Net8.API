@@ -6,7 +6,7 @@ on:
       - development
       
 env:
-  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/ApiRest.Net8.API
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/apirest-net8-api
 
 jobs:
   build-and-push:
@@ -28,6 +28,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
+          file: src/ApiRest.Net8.API/Dockerfile
           push: true
           tags: ${{ env.IMAGE_NAME }}:development
 
@@ -46,5 +47,10 @@ jobs:
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
           git add .
-          git commit -m "Update dev image to development"
-          git push
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update dev image"
+            git push
+          fi

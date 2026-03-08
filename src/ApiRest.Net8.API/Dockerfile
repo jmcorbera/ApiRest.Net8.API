@@ -2,12 +2,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Copiamos el csproj y restauramos dependencias
-COPY *.csproj ./
-RUN dotnet restore
-
-# Copiamos todo el código
-COPY . ./
+# Copiamos todo el proyecto
+COPY src/ApiRest.Net8.API/ ./
+RUN dotnet restore 
 RUN dotnet publish -c Release -o /app/publish
 
 # Stage 2: Runtime
@@ -16,7 +13,7 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 # Escuchar en todas las interfaces
-ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_URLS=http://+:8080
 ENV DOTNET_ENVIRONMENT=Development
 
 EXPOSE 80
