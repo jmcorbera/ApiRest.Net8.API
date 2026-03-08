@@ -1,0 +1,40 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/ApiRest.Net8.API:development
+
+      - name: Update GitOps repo (dev)
+        run: |
+          git clone https://github.com/jmcorbera/mi-api-gitops.git gitops
+          cd gitops/dev
+          sed -i "s|image:.*|image: ${{ secrets.DOCKER_USERNAME }}/mi-api:latest|" mi-api-deployment.yaml
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add mi-api-deployment.yaml
+          git commit -m "Update image for dev"
+          git push
