@@ -6,7 +6,7 @@ on:
       - development
       
 env:
-  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/ApiRest.Net8.API
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/apirest-net8-api
 
 jobs:
   build-and-push:
