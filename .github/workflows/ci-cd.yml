@@ -38,8 +38,8 @@ jobs:
 
       - name: Update deployment image 
         run: |
-          cd GitOps/dev
-          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }} |" ApiRest.Net8.API-deployment.yaml
+          cd GitOps/apps/apiRest.Net8.API/overlays/dev
+          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }} |" deployment.yaml
 
       - name: Commit and push changes 
         run: |
