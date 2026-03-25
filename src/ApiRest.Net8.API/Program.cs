@@ -1,3 +1,7 @@
+using DotNetEnv;
+
+DotNetEnv.Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,7 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ApiRest.Net8.API.Repositories.WeatherRepository>();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 
 var app = builder.Build();
 
