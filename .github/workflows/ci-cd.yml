@@ -4,13 +4,14 @@ on:
   push:
     branches:
       - development
-      
+
 env:
-  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/apirest-net8-api
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/apirest-net8-api:development
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -30,20 +31,20 @@ jobs:
           context: .
           file: src/ApiRest.Net8.API/Dockerfile
           push: true
-          tags: ${{ env.IMAGE_NAME }}:development
+          tags: ${{ env.IMAGE_NAME }}
 
       - name: Update GitOps repo (dev)
         run: |
           git clone https://x-access-token:${{ secrets.GITOPS_TOKEN }}@github.com/jmcorbera/GitOps.git
 
-      - name: Update deployment image 
+      - name: Update image in kustomization (dev)
         run: |
-          cd GitOps/dev
-          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}:development |" ApiRest.Net8.API-deployment.yaml
+          cd GitOps/apps/apiRest.Net8.API/overlays/dev
+          kustomize edit set image juanmcorbera/apirest-net8-api=${{ env.IMAGE_NAME }}
 
-      - name: Commit and push changes 
+      - name: Commit and push changes
         run: |
-          cd GitOps/dev
+          cd GitOps/apps/apiRest.Net8.API/overlays/dev
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
           git add .
